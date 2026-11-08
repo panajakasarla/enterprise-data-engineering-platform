@@ -25,16 +25,19 @@ python -m retail_pipeline.spark_layers data/sample_orders.csv outputs/lakehouse
 python -m unittest discover -s tests -v
 ```
 
-Expected: 5 Bronze, 3 Silver, and 3 Gold rows. See [Day 2 notes](docs/day2-spark-medallion.md).
+## Milestone 3 — Deterministic deduplication and rejection audit
 
-CI runs Python and Spark tests on pull requests. Output files are gitignored.
+Silver retains one valid record per order ID, using a stable ascending business-field sort to choose a winner. Rows that fail validation or lose deduplication are written to `silver/rejected_orders` with a `rejection_reason`. The same input can be safely rerun with overwrite mode without accumulating duplicates. This is **batch idempotence**, not yet incremental ingestion.
+
+For the bundled sample, expect **5 Bronze, 3 Silver, 2 rejected, and 3 Gold rows**. Review [Day 3 notes](docs/day3-data-quality-audit.md).
+
+CI runs Python and Spark tests on pull requests. Generated outputs are gitignored.
 
 ## Roadmap
 
 1. CSV ingestion and data quality
 2. PySpark medallion layers
-3. Deterministic deduplication, rejection audit and incremental processing
-4. SQL warehouse models
-5. Airflow orchestration
-6. Docker and IaC deployment
-7. Observability and end-to-end integration tests
+3. Deterministic deduplication and rejection audit
+4. Incremental watermark/checkpoint processing
+5. SQL warehouse models and Airflow orchestration
+6. Docker, IaC, and observability
