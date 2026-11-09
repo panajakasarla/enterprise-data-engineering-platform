@@ -54,6 +54,8 @@ def ingest_batch(source, database, batch_id):
         raise ValueError("batch_id must not be empty")
     source = Path(source)
     digest = hashlib.sha256(source.read_bytes()).hexdigest()
+    database = Path(database)
+    database.parent.mkdir(parents=True, exist_ok=True)
     with sqlite3.connect(database) as db:
         db.execute("BEGIN IMMEDIATE")
         initialize(db)
