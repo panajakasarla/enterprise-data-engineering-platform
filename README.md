@@ -33,11 +33,23 @@ For the bundled sample, expect **5 Bronze, 3 Silver, 2 rejected, and 3 Gold rows
 
 CI runs Python and Spark tests on pull requests. Generated outputs are gitignored.
 
+## Milestone 4 — Incremental checkpoints and replay protection
+
+A local SQLite reference implementation adds **transactional batch checkpoints**, SHA-256 source fingerprints, cross-batch order deduplication, rejection auditing, and an informational event-date watermark. It accepts late-arriving orders instead of dropping events older than the watermark. This milestone does **not** yet provide distributed Spark/Parquet transactional writes.
+
+```bash
+python -m retail_pipeline.incremental data/sample_orders.csv outputs/checkpoints.sqlite --batch-id sample-001
+python -m retail_pipeline.incremental data/sample_orders.csv outputs/checkpoints.sqlite --batch-id sample-001
+python -m unittest discover -s tests -v
+```
+
+The first command commits the batch; the second skips the identical replay. See [Day 4 notes](docs/day4-incremental-checkpoints.md).
+
 ## Roadmap
 
 1. CSV ingestion and data quality
 2. PySpark medallion layers
 3. Deterministic deduplication and rejection audit
-4. Incremental watermark/checkpoint processing
+4. Incremental watermark/checkpoint processing (SQLite reference implementation)
 5. SQL warehouse models and Airflow orchestration
 6. Docker, IaC, and observability
