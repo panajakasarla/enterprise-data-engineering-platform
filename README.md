@@ -45,11 +45,26 @@ python -m unittest discover -s tests -v
 
 The first command commits the batch; the second skips the identical replay. See [Day 4 notes](docs/day4-incremental-checkpoints.md).
 
+## Milestone 5 — SQL warehouse models and daily revenue
+
+Build SQL views for order facts, customer and product dimensions, and daily
+product activity on top of the committed SQLite ingestion database. Generate
+daily product revenue with exact decimal arithmetic, and report accepted,
+rejected, and batch counts without double-counting replays.
+
+```bash
+python -m retail_pipeline.warehouse outputs/checkpoints.sqlite
+python -m unittest discover -s tests -p 'test_warehouse.py' -v
+```
+
+See [Day 5 notes](docs/day5-sql-warehouse.md) for architecture, validation,
+limitations, and the next Airflow orchestration milestone.
+
 ## Roadmap
 
 1. CSV ingestion and data quality
 2. PySpark medallion layers
 3. Deterministic deduplication and rejection audit
 4. Incremental watermark/checkpoint processing (SQLite reference implementation)
-5. SQL warehouse models and Airflow orchestration
-6. Docker, IaC, and observability
+5. SQL warehouse models and analytics (SQLite views)
+6. Airflow orchestration and data quality gates\n7. Docker, IaC, and observability
