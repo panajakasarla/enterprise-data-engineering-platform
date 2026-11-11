@@ -60,6 +60,22 @@ python -m unittest discover -s tests -p 'test_warehouse.py' -v
 See [Day 5 notes](docs/day5-sql-warehouse.md) for architecture, validation,
 limitations, and the next Airflow orchestration milestone.
 
+## Milestone 6 — Airflow orchestration and quality gates
+
+The optional Airflow DAG (`dags/retail_daily.py`) schedules a replay-safe
+ingestion task, a data-quality gate, and atomic JSON warehouse report
+publication. The task functions can also run locally without Airflow:
+
+```bash
+python -m retail_pipeline.orchestration data/sample_orders.csv outputs/checkpoints.sqlite outputs/warehouse_report.json --max-rejection-ratio 0.50
+python -m unittest discover -s tests -p 'test_orchestration.py' -v
+```
+
+The sample input rejects 2 of 5 rows, so its 40% rejection ratio intentionally
+fails the production-oriented default gate of 25%; use 50% for the demo.
+See [Day 6 notes](docs/day6-airflow-orchestration.md) for deployment,
+retries, configuration, and single-writer SQLite limitations.
+
 ## Roadmap
 
 1. CSV ingestion and data quality
@@ -67,4 +83,5 @@ limitations, and the next Airflow orchestration milestone.
 3. Deterministic deduplication and rejection audit
 4. Incremental watermark/checkpoint processing (SQLite reference implementation)
 5. SQL warehouse models and analytics (SQLite views)
-6. Airflow orchestration and data quality gates\n7. Docker, IaC, and observability
+6. Airflow orchestration and data quality gates
+7. Docker, IaC, and observability
