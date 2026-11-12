@@ -8,6 +8,7 @@ services:
       AIRFLOW__CORE__LOAD_EXAMPLES: "false"
       AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
       AIRFLOW__CORE__EXECUTOR: SequentialExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: sqlite:////opt/airflow/metadata/airflow.db
       RETAIL_SOURCE: /opt/airflow/data/sample_orders.csv
       RETAIL_DB: /opt/airflow/outputs/checkpoints.sqlite
       RETAIL_REPORT: /opt/airflow/outputs/warehouse_report.json
@@ -16,8 +17,10 @@ services:
     volumes:
       - ./data:/opt/airflow/data:ro
       - retail-outputs:/opt/airflow/outputs
-      - airflow-state:/opt/airflow
+      - airflow-metadata:/opt/airflow/metadata
+      - airflow-logs:/opt/airflow/logs
     # Standalone mode is for local demos, not a production Airflow deployment.
 volumes:
   retail-outputs:
-  airflow-state:
+  airflow-metadata:
+  airflow-logs:
