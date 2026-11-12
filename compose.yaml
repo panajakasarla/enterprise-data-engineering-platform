@@ -1,0 +1,23 @@
+services:
+  airflow:
+    build: .
+    command: standalone
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+      AIRFLOW__CORE__EXECUTOR: SequentialExecutor
+      RETAIL_SOURCE: /opt/airflow/data/sample_orders.csv
+      RETAIL_DB: /opt/airflow/outputs/checkpoints.sqlite
+      RETAIL_REPORT: /opt/airflow/outputs/warehouse_report.json
+      # Sample fixture rejects 40% of records; production default is 25%.
+      RETAIL_MAX_REJECTION_RATIO: "0.50"
+    volumes:
+      - ./data:/opt/airflow/data:ro
+      - retail-outputs:/opt/airflow/outputs
+      - airflow-state:/opt/airflow
+    # Standalone mode is for local demos, not a production Airflow deployment.
+volumes:
+  retail-outputs:
+  airflow-state:
