@@ -16,7 +16,7 @@ class ContainerConfigTests(unittest.TestCase):
         compose = (ROOT / "compose.yaml").read_text(encoding="utf-8")
         for value in ("command: standalone", "RETAIL_SOURCE:", "RETAIL_DB:",
                       "RETAIL_REPORT:", "RETAIL_MAX_REJECTION_RATIO:",
-                      "retail-outputs:", "airflow-state:"):
+                      "retail-outputs:", "airflow-metadata:", "airflow-logs:"):
             with self.subTest(value=value):
                 self.assertIn(value, compose)
 
