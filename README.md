@@ -76,6 +76,24 @@ fails the production-oriented default gate of 25%; use 50% for the demo.
 See [Day 6 notes](docs/day6-airflow-orchestration.md) for deployment,
 retries, configuration, and single-writer SQLite limitations.
 
+## Milestone 7 — Dockerized local Airflow
+
+Run the retail DAG using a pinned Airflow 2.10.5 / Python 3.11 image
+without installing Airflow into your host Python environment:
+
+```bash
+docker compose build airflow
+bash scripts/check_airflow_dag.sh
+docker compose up -d airflow
+```
+
+The web UI is available at http://localhost:8080 (loopback only). The sample
+quality threshold is set to 50% because 2/5 fixture rows are rejected. Named
+volumes persist metadata, logs, and pipeline checkpoints; the input fixture is
+read-only. This single-container SequentialExecutor setup is **not production
+infrastructure**. See [Day 7 notes](docs/day7-docker-airflow.md) for verification,
+security limits, and cleanup instructions.
+
 ## Roadmap
 
 1. CSV ingestion and data quality
@@ -84,4 +102,5 @@ retries, configuration, and single-writer SQLite limitations.
 4. Incremental watermark/checkpoint processing (SQLite reference implementation)
 5. SQL warehouse models and analytics (SQLite views)
 6. Airflow orchestration and data quality gates
-7. Docker, IaC, and observability
+7. Dockerized local Airflow and DAG smoke checks
+8. Cloud IaC and observability
