@@ -103,4 +103,21 @@ security limits, and cleanup instructions.
 5. SQL warehouse models and analytics (SQLite views)
 6. Airflow orchestration and data quality gates
 7. Dockerized local Airflow and DAG smoke checks
-8. Cloud IaC and observability
+8. Structured operational monitoring and quality metrics
+9. Cloud infrastructure as code and alerting
+
+## Milestone 8 — Structured monitoring
+
+Run the existing replay-safe pipeline through a lightweight observability wrapper.
+It emits one JSON event per run, including elapsed time, cumulative accepted/rejected
+counts, committed batches, rejection ratio, and event-date watermark on success.
+Failures log only the exception class and are re-raised; customer/order data and
+raw exception messages are not included in the event.
+
+```bash
+python -m retail_pipeline.monitoring data/sample_orders.csv outputs/checkpoints.sqlite outputs/report.json --max-rejection-ratio 0.50
+python -m unittest discover -s tests -p 'test_monitoring.py' -v
+```
+
+This is local structured logging, **not** a hosted monitoring/alerting stack,
+and it does not yet instrument Airflow tasks. See [Day 8 notes](docs/day8-observability.md).
