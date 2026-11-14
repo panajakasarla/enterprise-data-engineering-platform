@@ -104,7 +104,8 @@ security limits, and cleanup instructions.
 6. Airflow orchestration and data quality gates
 7. Dockerized local Airflow and DAG smoke checks
 8. Structured operational monitoring and quality metrics
-9. Cloud infrastructure as code and alerting
+9. Read-only operational alert rules
+10. Cloud infrastructure as code and alert delivery
 
 ## Milestone 8 — Structured monitoring
 
@@ -121,3 +122,18 @@ python -m unittest discover -s tests -p 'test_monitoring.py' -v
 
 This is local structured logging, **not** a hosted monitoring/alerting stack,
 and it does not yet instrument Airflow tasks. See [Day 8 notes](docs/day8-observability.md).
+
+## Milestone 9 — Read-only operational alert rules
+
+Evaluate committed checkpoint metrics with deterministic severity-coded alert rules
+for empty batches, missing accepted orders, excessive rejection ratio, missing
+event-date watermark, and stale event dates.
+
+```bash
+python -m retail_pipeline.alerts outputs/checkpoints.sqlite --max-rejection-ratio 0.50 --max-watermark-age-days 30
+python -m unittest discover -s tests -p 'test_alerts.py' -v
+```
+
+The CLI prints JSON and exits 2 when alerts are present (0 if healthy). This
+local reference has no cloud deployment or notification transport. See
+[Day 9 notes](docs/day9-alert-rules.md) for thresholds and limitations.
