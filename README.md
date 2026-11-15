@@ -137,3 +137,21 @@ python -m unittest discover -s tests -p 'test_alerts.py' -v
 The CLI prints JSON and exits 2 when alerts are present (0 if healthy). This
 local reference has no cloud deployment or notification transport. See
 [Day 9 notes](docs/day9-alert-rules.md) for thresholds and limitations.
+
+## Milestone 10 — Terraform private artifact storage
+
+A minimal AWS Terraform module provisions a private, encrypted, versioned S3
+artifact bucket with TLS-only access, public-access blocks, and non-destructive
+deletion defaults. **Nothing is deployed automatically.** No credentials or
+Terraform state are stored in this repository.
+
+```bash
+python -m unittest discover -s tests -p 'test_terraform_security.py' -v
+cd infra/terraform
+terraform init -backend=false
+terraform fmt -check
+terraform validate
+```
+
+See [Day 10 notes](docs/day10-terraform-artifacts.md) for AWS planning,
+costs, IAM prerequisites, and deployment limitations.
