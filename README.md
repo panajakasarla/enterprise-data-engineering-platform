@@ -155,3 +155,21 @@ terraform validate
 
 See [Day 10 notes](docs/day10-terraform-artifacts.md) for AWS planning,
 costs, IAM prerequisites, and deployment limitations.
+
+## Milestone 11 — Least-privilege GitHub OIDC IAM and Terraform CI
+
+Terraform adds a GitHub Actions OIDC role with exact repository and branch trust,
+no static access keys, and S3 read/write limited to a configurable artifact prefix.
+A separate GitHub Actions workflow checks Terraform formatting, initialization,
+validation, and offline IAM regression tests. It does **not** deploy AWS resources.
+
+```bash
+python -m unittest discover -s tests -p 'test_terraform_iam.py' -v
+terraform -chdir=infra/terraform init -backend=false
+terraform -chdir=infra/terraform fmt -check -recursive
+terraform -chdir=infra/terraform validate
+```
+
+The module requires the ARN of an **existing** AWS GitHub OIDC provider before
+planning or applying. See [Day 11 notes](docs/day11-iam-oidc.md) for manual
+setup, security limitations, and the next deployment milestone.

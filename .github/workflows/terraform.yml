@@ -1,0 +1,30 @@
+name: Terraform offline validation
+on:
+  push:
+    paths:
+      - 'infra/terraform/**'
+      - 'tests/test_terraform_iam.py'
+      - '.github/workflows/terraform.yml'
+  pull_request:
+    paths:
+      - 'infra/terraform/**'
+      - 'tests/test_terraform_iam.py'
+      - '.github/workflows/terraform.yml'
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.9.8'
+      - name: Check Terraform formatting
+        run: terraform -chdir=infra/terraform fmt -check -recursive
+      - name: Initialize without remote backend
+        run: terraform -chdir=infra/terraform init -backend=false -input=false
+      - name: Validate Terraform syntax and references
+        run: terraform -chdir=infra/terraform validate -no-color
+      - name: Test IAM security guardrails
+        run: python -m unittest discover -s tests -p test_terraform_iam.py -v
