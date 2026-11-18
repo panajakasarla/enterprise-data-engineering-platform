@@ -173,3 +173,14 @@ terraform -chdir=infra/terraform validate
 The module requires the ARN of an **existing** AWS GitHub OIDC provider before
 planning or applying. See [Day 11 notes](docs/day11-iam-oidc.md) for manual
 setup, security limitations, and the next deployment milestone.
+
+## Milestone 13 — Remote Terraform state readiness
+
+Validate an **untracked** S3 backend configuration before manually migrating Terraform state:
+
+```bash
+python scripts/check_tf_backend.py infra/terraform/backend.hcl
+python -m unittest discover -s tests -p 'test_tf_backend.py' -v
+```
+
+The validator requires encryption and S3 lockfiles, rejects embedded credentials and unsafe state paths, and does not contact AWS. No infrastructure is deployed. See [Day 13 notes](docs/day13-remote-state.md) for secure bootstrap and migration steps.
