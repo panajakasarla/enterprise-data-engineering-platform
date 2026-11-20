@@ -1,0 +1,39 @@
+name: Terraform backend offline security
+on:
+  push:
+    paths:
+      - 'scripts/check_tf_backend.py'
+      - 'tests/test_tf_backend.py'
+      - 'tests/test_backend_ci.py'
+      - '.github/workflows/backend-security.yml'
+  pull_request:
+    paths:
+      - 'scripts/check_tf_backend.py'
+      - 'tests/test_tf_backend.py'
+      - 'tests/test_backend_ci.py'
+      - '.github/workflows/backend-security.yml'
+permissions:
+  contents: read
+jobs:
+  backend-security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate backend parser and security regression suite
+        run: python -m unittest discover -s tests -p 'test_tf_backend.py' -v
+      - name: Verify CI security contract
+        run: python -m unittest discover -s tests -p 'test_backend_ci.py' -v
+      - name: Reject unsafe backend fixture
+        run: |
+          set -eu
+          fixture="$(mktemp)"
+          trap 'rm -f "$fixture"' EXIT
+          printf 'bucket = "demo"\nkey = "../bad.tfstate"\nregion = "us-east-1"\nencrypt = false\nuse_lockfile = true\n' > "$fixture"
+          if python scripts/check_tf_backend.py "$fixture"; then
+            echo 'ERROR: unsafe backend configuration was accepted' >&2
+            exit 1
+          fi
