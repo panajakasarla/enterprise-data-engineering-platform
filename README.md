@@ -184,3 +184,14 @@ python -m unittest discover -s tests -p 'test_tf_backend.py' -v
 ```
 
 The validator requires encryption and S3 lockfiles, rejects embedded credentials and unsafe state paths, and does not contact AWS. No infrastructure is deployed. See [Day 13 notes](docs/day13-remote-state.md) for secure bootstrap and migration steps.
+
+## Milestone 15 — Terraform backend security CI
+
+A read-only GitHub Actions workflow runs the Milestone 13 backend validator tests, checks its CI security contract, and verifies that an unsafe temporary backend fixture is rejected. No AWS credentials or cloud deployments are required.
+
+```bash
+python -m unittest discover -s tests -p 'test_tf_backend.py' -v
+python -m unittest discover -s tests -p 'test_backend_ci.py' -v
+```
+
+See [Day 15 notes](docs/day15-backend-ci.md). Static validation does not establish that real S3 backend resources are secure.
