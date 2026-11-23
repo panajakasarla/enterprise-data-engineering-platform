@@ -1,0 +1,17 @@
+name: CSV schema contract
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  schema-contract:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m unittest discover -s milestone18-schema-contract/tests -v
+      - run: python milestone18-schema-contract/src/schema_contract.py milestone18-schema-contract/sample.csv milestone18-schema-contract/contract.json
